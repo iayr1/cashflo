@@ -1,0 +1,7 @@
+from enum import Enum
+
+class ActionType(str, Enum):
+    APPROVE = "APPROVE"
+    REJECT = "REJECT"
+    ESCALATE_TO_FINANCE_CONTROLLER = "ESCALATE_TO_FINANCE_CONTROLLER"
+    FLAG_FOR_REVIEW = "FLAG_FOR_REVIEW"

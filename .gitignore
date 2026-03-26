@@ -1,0 +1,14 @@
+# Ignore secret environment variables completely
+.env
+.env.*
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Local data / logic caches
+rules.json
+execution_result.json
+temp_policy.txt
