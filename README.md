@@ -81,16 +81,6 @@ streamlit run interface/streamlit/app.py
 ```
 *A new browser window will automatically launch at **`http://localhost:8501`**!*
 
-#### Streamlit Dashboard Previews
-<div align="center">
-  <img src="./assets/1.png" width="45%" alt="Rules Extraction Input">
-  <img src="./assets/2.png" width="45%" alt="Extracted Schema Validation">
-</div>
-<div align="center">
-  <img src="./assets/3.png" width="45%" alt="Invoice Payload Input">
-  <img src="./assets/4.png" width="45%" alt="Evaluation Result Dashboard">
-</div>
-
 ### ⚡ Option B: REST API (FastAPI)
 Launch the API server for enterprise backend integrations and webhooks:
 ```bash
