@@ -50,11 +50,29 @@ with tab1:
     except FileNotFoundError:
         pass
 
+    uploaded_file = st.file_uploader("📂 Upload AP Policy Document (PDF, DOCX, TXT, MD)", type=["pdf", "docx", "txt", "md"])
+    
+    if uploaded_file:
+        # Save temp file for DocumentParser to natively handle
+        temp_upload_path = f"temp_upload_{uploaded_file.name}"
+        with open(temp_upload_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        try:
+            # Re-use our DocumentParser seamlessly
+            default_policy = document_parser.parse(temp_upload_path)
+            st.success(f"Successfully extracted text from `{uploaded_file.name}`. Verify below before proceeding!")
+        except Exception as e:
+            st.error(f"Error reading file: {e}")
+        finally:
+            if os.path.exists(temp_upload_path):
+                os.remove(temp_upload_path)
+
     policy_input = st.text_area(
-        "Current AP Policy Text:",
+        "📝 Current AP Policy Text:",
         value=default_policy,
         height=300,
-        placeholder="Paste policy here..."
+        placeholder="Paste policy here or upload a file above..."
     )
 
     if st.button("Extract Rules via LLM"):
