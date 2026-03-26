@@ -1,89 +1,113 @@
-# 🚀 AP Rule Engine
+# 🏦 Cashflo Accounts Payable (AP) Rule Engine
 
-A production-ready system to convert an Accounts Payable policy document into deterministic executable rules using Clean Architecture.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0+-green.svg)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.20+-red.svg)](https://streamlit.io/)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean-orange.svg)](#)
 
-## 🏗️ Architecture Stack
+A production-ready system that deterministically converts Accounts Payable policies into executable JSON rules using Large Language Models (LLMs), featuring a robust evaluation engine for automated invoice approvals.
 
-This project strictly adheres to **Clean Architecture** and SOLID principles to guarantee maintainability and scalability.
+---
 
-```
+## 🏗️ Clean Architecture
+
+This project strictly adheres to **Clean Architecture** and SOLID principles to guarantee maintainability, separation of concerns, and scalability.
+
+```text
 ap_rule_engine/
-├── core/                       # Domain Entities and Use Cases
+├── core/                       # 🧠 Domain Entities and Use Cases
 │   ├── entities/               # Rule, Condition, Action
 │   └── usecases/               # Extract, Validate, and Execute policies
-├── infrastructure/             # Tooling and external clients
-│   ├── llm/                    # OpenAI API integration & Prompts
-│   ├── parsers/                # Document text parser
+├── infrastructure/             # 🔌 External Tooling & Integrations
+│   ├── llm/                    # OpenAI API integration & Structured Prompts
+│   ├── parsers/                # Document text parsers
 │   └── storage/                # JSON Persistence for rules and output
-├── interface/                  # Presentational layer (Adapters)
-│   ├── api/                    # FastAPI endpoints
-│   └── cli/                    # CLI tool to run the pipeline
-└── tests/                      # Unit tests
+├── interface/                  # 💻 Presentational Adapters
+│   ├── streamlit/              # Interactive GUI Dashboard
+│   ├── api/                    # FastAPI endpoints (REST)
+│   └── cli/                    # Headless CLI tool
+└── tests/                      # 🧪 Pytest Unit test suite
 ```
 
-## 🛠️ Setup Instructions
+---
 
-1. **Install Python Dependencies:**
-   Ensure you have Python 3.9+ installed.
-   ```bash
-   pip install -r requirements.txt
-   ```
+## 📌 Features
 
-2. **Environment Configuration:**
-   Set the OpenAI API key to process unstructured documents.
-   ```bash
-   export OPENAI_API_KEY="your_api_key_here"
-   # On windows: set OPENAI_API_KEY=your_api_key
-   ```
-   *(Note: The system intercepts missing keys and falls back to a sample mock rule for demonstration).*
+- **Automated Extraction:** Uses OpenAI's `gpt-4o` to map natural language policies into structured, logically bounded Pydantic schemas.
+- **Deterministic Evaluation:** Translates complex logical AND bounds (e.g., `> 10% PO` and `< 50L`) to automatically grade invoices.
+- **Conflict Validation:** Alerts administrators if overlapping or conflicting rules are extracted.
+- **Three Interfaces:** Use the system entirely via GUI (Streamlit), REST API (FastAPI), or headless CLI!
 
-## 🏃 Execution Guide
+---
 
-### 🖥️ Streamlit Frontend UI (Recommended)
+## 🚀 Getting Started
 
-1. **Launch the interactive dashboard:**
-   ```bash
-   streamlit run interface/streamlit/app.py
-   ```
-2. A new browser window will open automatically where you can parse documents and evaluate invoices visually.
+### 1. Prerequisites
+Ensure you have Python installed on your machine.
+- Python 3.9+
+- pip
 
-### Command Line Interface (CLI)
+### 2. Installation
+Clone the repository to your local machine and install the Python dependencies:
+```bash
+# Clone the repository
+git clone https://github.com/your-username/ap-rule-engine.git
 
-1. **Extract Rules from Policy Document:**
-   ```bash
-   python interface/cli/run.py --extract ap_policy.txt
-   ```
-   *Generates `rules.json`.*
+# Navigate into the project folder
+cd ap-rule-engine
 
-2. **Evaluate Invoice against Extracted JSON Rules:**
-   First, create a `sample_invoice.json`:
-   ```json
-   {
-       "invoice_amount": 120000,
-       "po_amount": 100000,
-       "invoice_date": "2026-06-01",
-       "grand_total": 120000,
-       "vendor_gstin": "27AAACW1234QA"
-   }
-   ```
-   Evaluate:
-   ```bash
-   python interface/cli/run.py --evaluate sample_invoice.json
-   ```
-   *Generates `execution_result.json`.*
+# Install dependencies strictly
+pip install -r requirements.txt
+```
 
-### REST API (FastAPI)
+### 3. Environment Configuration
+The application requires an OpenAI API key to perform dynamic LLM extractions. 
+Create a file exactly named **`.env`** in the root of the project directory (`ap_rule_engine/.env`) and add your secret key:
+```env
+OPENAI_API_KEY="sk-proj-your-api-key-here"
+```
+*(Note: Do not commit the `.env` file to version control. Let Git ignore it.)*
 
-1. **Launch Server:**
-   ```bash
-   uvicorn interface.api.main:app --reload
-   ```
-2. Navigate to `http://localhost:8000/docs` to use the `/extract` and `/evaluate` endpoints securely formatted adhering to the system.
+---
 
-## 🤖 AI Tools Used & Extensibility
-* **LLM Engine**: OpenAI `gpt-4o` with strictly controlled structured outputs (`response_format={"type": "json_object"}`).
-* **Prompt Engineering**: Dynamic multi-modal mapping prompting `ActionEnum` extraction to deterministically tie back to execution constraints.
+## 🖥️ Running the Application
 
-## ⚠️ Limitations
-- Real-world deployments require persistent SQL/NoSQL storage over `rules.json` via modifying the `JsonStore` implementing the Repository Pattern.
-- Invoice expression validations like (`po_amount * 1.10`) parse simplistically currently. Complex evaluators typically necessitate a safe sandbox like `ast.literal_eval`.
+This software was engineered with completely detached interfaces, meaning you can run it three different ways depending on your preferred style!
+
+### 🌟 Option A: Streamlit Interactive Dashboard (Recommended)
+Launch the beautiful frontend user interface to visually parse documents and securely test rules:
+```bash
+streamlit run interface/streamlit/app.py
+```
+*A new browser window will automatically launch at **`http://localhost:8501`**!*
+
+### ⚡ Option B: REST API (FastAPI)
+Launch the API server for enterprise backend integrations and webhooks:
+```bash
+uvicorn interface.api.main:app --reload
+```
+*Navigate to **`http://localhost:8000/docs`** to explore the Swagger UI documentation and use the `/extract` or `/evaluate` HTTP endpoints directly!*
+
+### 🛠️ Option C: Command Line Interface (CLI)
+Perfect for CI/CD pipelines, cronjobs, or automated headless batch processing:
+
+**(1) Extract Rules to JSON:**
+```bash
+python interface/cli/run.py --extract ap_policy.txt
+```
+**(2) Evaluate an Invoice Payload:**
+```bash
+python interface/cli/run.py --evaluate sample_invoice.json
+```
+
+---
+
+## 🧪 Testing
+To run the automated validation suite on the core execution engine logic against strictly typed conditions:
+```bash
+pytest tests/test_rule_engine.py
+```
+
+## 📝 Limitations & Next Steps
+- Implement persistent database storage (PostgreSQL/MongoDB) in the `infrastructure/storage` adapter to structurally phase out `json_store.py`.
+- Add advanced custom expression sandboxing (e.g., `ast.literal_eval`) to safely execute highly complex mathematical or conditional text derivations dynamically.

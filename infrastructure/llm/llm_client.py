@@ -5,14 +5,20 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from core.entities.rule import Rule, Condition, ActionType
 from .prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Load secret environment variables carefully from the .env file
-load_dotenv()
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+env_path = ROOT_DIR / ".env"
+
+load_dotenv(dotenv_path=env_path, override=True)
 
 class LLMClient:
     def __init__(self, api_key: Optional[str] = None):
         key = api_key or os.getenv("OPENAI_API_KEY")
+        if key:
+            key = key.strip().strip('"').strip("'")
+            
         # In case API key is missing (e.g., in a test environment or dummy run), handle it gracefully
         self.client = OpenAI(api_key=key) if key else None
 
